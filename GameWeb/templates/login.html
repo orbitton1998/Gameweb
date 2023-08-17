@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+
+<body>
+    {% include 'nav.html' %}
+
+    <h2>Login</h2>
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %} 
+        Username 
+        <input name="username" /> &nbsp;
+         Password <input name="password" type="password" />
+        <input type="submit" value="Login" />
+    </form>
+    {{ message }}
+</body>
+
+</html>
