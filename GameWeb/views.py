@@ -2,14 +2,17 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from GameWeb.models import Game, Customer
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserRegistrationForm,OrderForm
-from django.contrib.auth.decorators import login_required
+from .forms import UserRegistrationForm,OrderForm,GameForm
+from django.contrib.auth.decorators import login_required,user_passes_test
 from .models import Game, Order
 
 
 
 def home(request):
      return render(request, 'home.html')
+
+def is_superuser(user):
+    return user.is_superuser
 
 @login_required
 def games(request):
@@ -96,3 +99,17 @@ def place_order(request, game_id):
 
     context = {'game': game, 'form': form}
     return render(request, 'place_order.html', context)
+
+@login_required
+@user_passes_test(is_superuser)
+def add_game(request):
+    if request.method == 'POST':
+        form = GameForm(request.POST, request.FILES)  # Make sure to handle file uploads
+        if form.is_valid():
+            form.save()
+            return redirect('game-view')  # Redirect to the game view after adding the game
+    else:
+        form = GameForm()
+
+    context = {'form': form}
+    return render(request, 'add_game.html', context)
