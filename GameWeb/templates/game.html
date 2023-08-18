@@ -1,32 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        .game-card {
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .game-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .order-button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
 <body>
 
 {% include 'nav.html' %}
 
 <div class="jumbotron">
-  <div class="container text-center">
-    <h1>GameWeb</h1>      
-    <p>Welcome to one of a kind Store</p>
-  </div>
-</div>
-  
-<div class="container-fluid bg-3 text-center"> 
-    
-
-  <h3>The Games</h3><br>
-  <div class="row">
-    {% for game in games %}
-    <div class="col-sm-3">
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-      <p>{{game.name}} - {{game.price}} - {{game.genre}}</p>
+    <div class="container text-center">
+        <h1>GameWeb</h1>      
+        <p>You can now place an order!</p>
+        {% if request.user.is_authenticated %}
+        <p>Hello, {{ request.user.username }}!</p>
+        {% endif %}
     </div>
-    {% empty %}
-    <li>correctly under maintance</li>
-{% endfor %}
-</div><br>
+</div>
 
+<div class="container-fluid bg-3 text-center"> 
+
+    <h3>The Games</h3><br>
+    <div class="row">
+        {% for game in games %}
+        <div class="col-sm-4">
+            <div class="game-card">
+                <img src="path_to_your_image.jpg" alt="{{ game.name }} Image" class="game-image">                <h4>{{ game.name }}</h4>
+                <p>Price: ${{ game.price }}</p>
+                <p>Genre: {{ game.genre }}</p>
+                <p>Quantity: {{ game.quantity }}</p>
+                <form method="post" action="{% url 'place-order' game.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="game_id" value="{{ game.id }}">
+                    <label for="id_quantity">Quantity:</label>
+                    <input type="number" name="quantity" min="1" value="1">
+                    <button type="submit" class="btn btn-primary order-button">Order</button>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <li>Currently under maintenance</li>
+        {% endfor %}
+    </div><br>
+</div>
 
 </body>
 </html>

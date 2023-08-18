@@ -2,9 +2,16 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from GameWeb.models import Game, Customer
 from django.contrib.auth import login, logout, authenticate
-# Create your views here.
+from .forms import UserRegistrationForm,OrderForm
+from django.contrib.auth.decorators import login_required
+from .models import Game, Order
 
 
+
+def home(request):
+     return render(request, 'home.html')
+
+@login_required
 def games(request):
     all_games = Game.objects.all()
     context = {
@@ -42,5 +49,50 @@ def signin(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('game-view')
+    return redirect('home')
 
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user:
+                login(request, user)
+                return redirect('game-view')
+    else:
+        form = UserRegistrationForm()
+    
+    return render(request, 'register.html', {'form': form})
+
+from django.db import transaction
+
+@login_required
+def place_order(request, game_id):
+    game = Game.objects.get(pk=game_id)
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            quantity = form.cleaned_data['quantity']
+            if quantity <= 0:
+                return render(request, 'place_order.html', {'game': game, 'form': form, 'error_message': 'Invalid quantity.'})
+            
+            if game.quantity >= quantity:
+                with transaction.atomic():
+                    order = Order.objects.create(
+                        customer=request.user,  # Use request.user directly
+                        game_details=game.name,
+                    )
+                    game.quantity -= quantity
+                    game.save()
+                    return render(request, 'order_success.html')  # Assuming you have an 'order_success.html' template
+            else:
+                return render(request, 'place_order.html', {'game': game, 'form': form, 'error_message': 'Insufficient stock.'})
+    else:
+        form = OrderForm(initial={'game_id': game_id})
+
+    context = {'game': game, 'form': form}
+    return render(request, 'place_order.html', context)

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        .jumbotron {
+            background-image: url('https://picsum.photos/id/56/200/300');
+            background-size: cover;
+            background-position: center;
+            height: 300px;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        .container-fluid.bg-3 {
+            padding: 50px 0;
+        }
+
+        .stylish-text {
+            background-color: #f7f7f7;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+  
+    {% include 'nav.html' %}
+    
+    <div class="jumbotron">
+        <div class="container">
+            <h1>GameWeb</h1>      
+            <p>Welcome to a one-of-a-kind Store</p>
+        </div>
+    </div>
+    
+    <div class="container-fluid bg-3 text-center">
+        <div class="stylish-text">
+            <p>Hello and welcome to our home page, right before you can purchasing games.. <p>
+
+            </p>Please login , or register - if you do not have an existing user</p>
+            
+        </div>
+    </div>
+</body>
+</html>
