@@ -15,7 +15,7 @@ class Game(models.Model):
     name = models.CharField(max_length=100, null=False)
     genre = models.CharField(max_length=20, null=False)  
     price = models.IntegerField(null=False)
-    image = models.ImageField(upload_to="game_images", default="/game_images/game.jpg")
+    online_image_url = models.URLField(blank=True)  # Add this field for online image URL
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.IntegerField(default=0)
 
