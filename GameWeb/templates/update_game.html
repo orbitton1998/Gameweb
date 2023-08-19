@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Game</title>
+</head>
+<body>
+    <h1>Update Game</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_price">Price:</label>
+        <input type="number" name="price" min="0" step="0.01" value="{{ game.price }}">
+        <br>
+        <label for="id_quantity">Quantity:</label>
+        <input type="number" name="quantity" min="0" value="{{ game.quantity }}">
+        <br>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+    <a href="{% url 'game-view' %}">Cancel</a>
+</body>
+</html>
