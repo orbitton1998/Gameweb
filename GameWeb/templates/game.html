@@ -35,7 +35,7 @@
 
 <div class="jumbotron">
     <div class="container text-center">
-        <h1>GameWeb</h1>      
+        <h1>GameWeb</h1>
         <p>You can now place an order!</p>
         {% if request.user.is_authenticated %}
         <p>Hello, {{ request.user.username }}!</p>
@@ -43,17 +43,25 @@
     </div>
 </div>
 
-<div class="container-fluid bg-3 text-center"> 
+<div class="container-fluid bg-3 text-center">
 
     <h3>The Games</h3><br>
     <div class="row">
         {% for game in games %}
         <div class="col-sm-4">
             <div class="game-card">
-                <img src="path_to_your_image.jpg" alt="{{ game.name }} Image" class="game-image">                <h4>{{ game.name }}</h4>
+                <img src="path_to_your_image.jpg" alt="{{ game.name }} Image" class="game-image">
+                <h4>{{ game.name }}</h4>
                 <p>Price: ${{ game.price }}</p>
                 <p>Genre: {{ game.genre }}</p>
                 <p>Quantity: {{ game.quantity }}</p>
+                
+                {% if request.user.is_superuser %}
+                <form method="post" action="{% url 'delete-game' game.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                {% else %}
                 <form method="post" action="{% url 'place-order' game.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="game_id" value="{{ game.id }}">
@@ -61,6 +69,7 @@
                     <input type="number" name="quantity" min="1" value="1">
                     <button type="submit" class="btn btn-primary order-button">Order</button>
                 </form>
+                {% endif %}
             </div>
         </div>
         {% empty %}

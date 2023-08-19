@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.http import HttpResponse
 from GameWeb.models import Game, Customer
 from django.contrib.auth import login, logout, authenticate
@@ -113,3 +113,15 @@ def add_game(request):
 
     context = {'form': form}
     return render(request, 'add_game.html', context)
+
+@login_required
+@user_passes_test(is_superuser)
+def delete_game(request, game_id):
+    game = get_object_or_404(Game, id=game_id)
+    
+    if request.method == 'POST':
+        game.delete()
+        return redirect('game-view')  # Redirect to the game view after deletion
+
+    context = {'game': game}
+    return render(request, 'delete_game.html', context)
